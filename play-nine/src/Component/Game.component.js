@@ -11,16 +11,16 @@ class Game extends Component {
         return 1 + Math.floor(Math.random() * 9);
     }
 
-    static initialState = () => ({
+    static initialState = {
         selectedNumbers: [],
         randomSelectedNumberOfStars: Game.randomNumberOfStars(),
         usedNumbers: [],
         answerIsCorrect: null,
         redrawsLeft: 5,
         doneStatus: null
-    });
+    };
 
-    state = Game.initialState();
+    state = Game.initialState;
 
     selectNumber = (clickedNumber) => {
         if (this.state.selectedNumbers.indexOf(clickedNumber) < 0) {
@@ -91,7 +91,7 @@ class Game extends Component {
     }
 
     playAgain = () => {
-        Game.initialState();
+         this.setState(Game.initialState);
     }
 
     possibleCombinationSum = (arr, n) => {
