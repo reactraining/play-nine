@@ -19,7 +19,7 @@ class Game extends Component {
         usedNumbers: [],
         answerIsCorrect: null,
         redrawsLeft: 5,
-        doneStatus: null,
+        doneStatus: { isFinished : false},
         time: null
     };
 
@@ -33,7 +33,8 @@ class Game extends Component {
 
         this.stopWatch.current.start();
 
-        if (this.state.selectedNumbers.indexOf(clickedNumber) < 0) {
+        if (this.state.selectedNumbers.indexOf(clickedNumber) < 0
+            && this.state.usedNumbers.indexOf(clickedNumber) < 0) {
             this.setState(prevState =>
                 ({
                     selectedNumbers: prevState.selectedNumbers.concat(clickedNumber),
@@ -94,11 +95,11 @@ class Game extends Component {
     updateDoneStatus = () => {
         this.setState((prevState) => {
             if (prevState.usedNumbers.length === 9) {
-                return { doneStatus: 'Done. Nice!', time: this.stopWatch.current.stop() }
+                return { doneStatus: { text: 'Done. Nice!', isFinished: true, isSuccess: true }, time: this.stopWatch.current.stop() }
             }
             if (prevState.redrawsLeft === 0 && !this.possibleSolutions(prevState)) {
                 this.stopWatch.current.stop();
-                return { doneStatus: 'Game Over!' };
+                return { doneStatus: { text: 'Game Over!', isFinished: true, isSuccess: false } };
             }
         });
     }
@@ -147,7 +148,7 @@ class Game extends Component {
                     <Answer selectedNumbers={selectedNumbers} handleClick={this.removeNumber} />
                 </div>
                 <br />
-                {doneStatus ?
+                {doneStatus.isFinished ?
                     <DoneFrame doneStatus={doneStatus} playAgain={this.playAgain} /> :
                     <Numbers selectNumber={this.selectNumber} selectedNumbers={selectedNumbers} usedNumbers={usedNumbers} />
                 }
