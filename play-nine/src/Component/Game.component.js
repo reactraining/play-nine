@@ -5,6 +5,8 @@ import Answer from './Answer.component';
 import Numbers from './Numbers.component';
 import DoneFrame from './DoneFrame.component';
 import _ from 'lodash';
+import Stopwatch from './Stopwatch.component';
+import LeaderBoard from './LeaderBoard.Component';
 
 class Game extends Component {
     static randomNumberOfStars = () => {
@@ -17,12 +19,20 @@ class Game extends Component {
         usedNumbers: [],
         answerIsCorrect: null,
         redrawsLeft: 5,
-        doneStatus: null
+        doneStatus: null,
+        time: null
     };
 
-    state = Game.initialState;
+    constructor(props) {
+        super(props);
+        this.state = Game.initialState;
+        this.stopWatch = React.createRef();
+    }
 
     selectNumber = (clickedNumber) => {
+
+        this.stopWatch.current.start();
+
         if (this.state.selectedNumbers.indexOf(clickedNumber) < 0) {
             this.setState(prevState =>
                 ({
@@ -62,6 +72,8 @@ class Game extends Component {
     }
 
     changeStarsNumber = () => {
+        this.stopWatch.current.start();
+
         if (this.state.redrawsLeft > 0) {
             this.setState((prevState) => ({
                 randomSelectedNumberOfStars: Game.randomNumberOfStars(),
@@ -82,16 +94,18 @@ class Game extends Component {
     updateDoneStatus = () => {
         this.setState((prevState) => {
             if (prevState.usedNumbers.length === 9) {
-                return { doneStatus: 'Done. Nice!' };
+                return { doneStatus: 'Done. Nice!', time: this.stopWatch.current.stop() }
             }
             if (prevState.redrawsLeft === 0 && !this.possibleSolutions(prevState)) {
+                this.stopWatch.current.stop();
                 return { doneStatus: 'Game Over!' };
             }
         });
     }
 
     playAgain = () => {
-         this.setState(Game.initialState);
+        this.setState(Game.initialState);
+        this.stopWatch.current.reset();
     }
 
     possibleCombinationSum = (arr, n) => {
@@ -113,10 +127,13 @@ class Game extends Component {
     };
 
     render() {
-        const { selectedNumbers, randomSelectedNumberOfStars, answerIsCorrect, usedNumbers, redrawsLeft, doneStatus } = this.state;
+        const { selectedNumbers, randomSelectedNumberOfStars, answerIsCorrect, usedNumbers, redrawsLeft, doneStatus, time } = this.state;
         return (
             <div className="container">
-                <h3>Play Nine</h3>
+                <div className="row">
+                    <h3 className='col-7'>Play Nine</h3>
+                    <Stopwatch ref={this.stopWatch} restart={this.playAgain} />
+                </div>
                 <hr />
                 <div className="row">
                     <Stars numberOfStars={randomSelectedNumberOfStars} />
@@ -134,7 +151,10 @@ class Game extends Component {
                     <DoneFrame doneStatus={doneStatus} playAgain={this.playAgain} /> :
                     <Numbers selectNumber={this.selectNumber} selectedNumbers={selectedNumbers} usedNumbers={usedNumbers} />
                 }
+                {time ?
+                    <LeaderBoard time={this.time} /> : <div></div>
 
+                }
             </div>
         );
     }
