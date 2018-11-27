@@ -17,7 +17,7 @@ const Numbers = (props) => {
     }
 
     return (
-        <div className="card text-center">
+        <div className="card text-center numbers-container">
             <div>
                 {Numbers.list.map((number, i) => 
                 <span key={i} className={numberClassName(number)}

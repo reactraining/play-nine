@@ -6,7 +6,6 @@ import Numbers from './Numbers.component';
 import DoneFrame from './DoneFrame.component';
 import _ from 'lodash';
 import Stopwatch from './Stopwatch.component';
-import LeaderBoard from './LeaderBoard.Component';
 
 class Game extends Component {
     static randomNumberOfStars = () => {
@@ -19,7 +18,7 @@ class Game extends Component {
         usedNumbers: [],
         answerIsCorrect: null,
         redrawsLeft: 5,
-        doneStatus: { isFinished : false},
+        doneStatus: { isFinished: false },
         time: null
     };
 
@@ -94,12 +93,13 @@ class Game extends Component {
 
     updateDoneStatus = () => {
         this.setState((prevState) => {
+            
             if (prevState.usedNumbers.length === 9) {
                 return { doneStatus: { text: 'Done. Nice!', isFinished: true, isSuccess: true }, time: this.stopWatch.current.stop() }
             }
             if (prevState.redrawsLeft === 0 && !this.possibleSolutions(prevState)) {
-                this.stopWatch.current.stop();
-                return { doneStatus: { text: 'Game Over!', isFinished: true, isSuccess: false } };
+                
+                return { doneStatus: { text: 'Game Over!', isFinished: true, isSuccess: false} , time: this.stopWatch.current.stop() };
             }
         });
     }
@@ -132,7 +132,7 @@ class Game extends Component {
         return (
             <div className="container">
                 <div className="row">
-                    <h3 className='col-7'>Play Nine</h3>
+                    <h4 className='col-7'>Play Nine</h4>
                     <Stopwatch ref={this.stopWatch} restart={this.playAgain} />
                 </div>
                 <hr />
@@ -149,12 +149,8 @@ class Game extends Component {
                 </div>
                 <br />
                 {doneStatus.isFinished ?
-                    <DoneFrame doneStatus={doneStatus} playAgain={this.playAgain} /> :
+                    <DoneFrame doneStatus={doneStatus} playAgain={this.playAgain} time={time} /> :
                     <Numbers selectNumber={this.selectNumber} selectedNumbers={selectedNumbers} usedNumbers={usedNumbers} />
-                }
-                {time ?
-                    <LeaderBoard time={this.time} /> : <div></div>
-
                 }
             </div>
         );

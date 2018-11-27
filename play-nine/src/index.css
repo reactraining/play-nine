@@ -22,10 +22,15 @@ span{
   display:inline-block;
   margin: 0.5em;
   text-align: center;
+}
+
+.numbers-container span,
+.stopwatch-container span,
+.answer-container span{
   background-color: #ccc;
-  width:24px;
   border-radius: 50%;
   cursor: pointer;
+  width:24px;
 }
 
 .selected{
@@ -34,7 +39,7 @@ span{
   cursor: not-allowed;
 }
 
-.used{
+.numbers-container span.used{
   background-color: #aaddaa;
   color: #99bb99;
   cursor: not-allowed;

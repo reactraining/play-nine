@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import FortuneCookieService from '../Service/FortuneCookie.service';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class FortuneCookie extends Component {
 
@@ -8,21 +9,30 @@ class FortuneCookie extends Component {
 
         this.state = {
             randomNumber: Math.random() * 100,
-            textToDisplay: ''
+            textToDisplay: '',
+            display: false
         };
 
-        FortuneCookieService.getAny(this.state.randomNumber).then((response) =>{
-            this.setState({ textToDisplay : response.data[0].message});
+        FortuneCookieService.getAny(this.state.randomNumber).then((response) => {
+            this.setState({ textToDisplay: response.data[0].message, display: true });
         });
     };
 
 
     render() {
         return (
-            <div>
+            <div className='fortunecookie-container text-center'>
                 <hr />
-                <h3>Don't be sad, have a fortune cookie: </h3>
-                <p className="font-weight-bold font-italic">"{this.state.textToDisplay}"</p>
+                {this.state.display ?
+
+                    <div>
+                        <h4>Don't be sad, have a fortune cookie: </h4>
+                        <p className="font-weight-bold font-italic">"{this.state.textToDisplay}"</p>
+                    </div> :
+                    <div className='text-center'>
+                        <FontAwesomeIcon icon='spinner' />
+                    </div>
+                }
             </div >
         )
     };

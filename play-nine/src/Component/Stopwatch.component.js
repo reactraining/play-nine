@@ -5,34 +5,38 @@ class Stopwatch extends Component {
         isRunning: false,
         runningSeconds: 0,
         runningMs: 0,
-        runningMinutes: 0
+        runningMinutes: 0,
+        incrementer: null
     };
 
     constructor(props) {
         super(props);
         this.state = Stopwatch.initialState;
     }
-    
-    stop = () => {
-        clearInterval(this.incrementer);
 
+    stop = () => {
+        clearInterval(this.state.incrementer);
+
+        this.setState({ incrementer: null, isRunning: false });
         return { seconds: this.getSeconds(), milliseconds: this.getMiliSeconds(), minutes: this.getMinutes() }
     }
 
     start = () => {
         if (!this.state.isRunning) {
             var _this = this;
-            this.incrementer = setInterval(function () {
-                _this.setState((prevState) => {
-                    var milliseconds = (prevState.runningMs + 10);
-                    return {
-                        runningMs: milliseconds,
-                        runningSeconds: Math.floor(milliseconds / 1000),
-                        runningMinutes: Math.floor(milliseconds / 60000),
-                        isRunning: true
-                    }
-                })
-            }, 10)
+            this.setState({
+                incrementer: setInterval(function () {
+                    _this.setState((prevState) => {
+                        var milliseconds = (prevState.runningMs + 10);
+                        return {
+                            runningMs: milliseconds,
+                            runningSeconds: Math.floor(milliseconds / 1000),
+                            runningMinutes: Math.floor(milliseconds / 60000),
+                            isRunning: true
+                        }
+                    })
+                }, 10)
+            })
         }
     }
 
@@ -57,8 +61,7 @@ class Stopwatch extends Component {
     }
 
     togglePlayForFun = () => {
-        if (this.props.restart)
-        {
+        if (this.props.restart) {
             this.props.restart();
         }
 
@@ -66,7 +69,7 @@ class Stopwatch extends Component {
         this.setState((prevState) => ({
             playForFun: !prevState.playForFun
         }));
-        
+
         this.setState(Stopwatch.initialState);
     }
 
@@ -79,9 +82,9 @@ class Stopwatch extends Component {
 
     render() {
         return (
-            <div className='col-5 text-center'>
+            <div className='col-5 text-center stopwatch-container'>
 
-                <h3>{this.state.playForFun ? 'Enjoy!' : 'Your time'}</h3>
+                <h4>{this.state.playForFun ? 'Enjoy!' : 'Your time'}</h4>
                 <div className={this.state.playForFun ? 'd-none' : ''}>
                     <span className="minutes">{this.getMinutes()}</span>:<span className="seconds">{this.getSeconds()}</span> <span className="tens">{this.getMiliSeconds()}</span>
                 </div>
